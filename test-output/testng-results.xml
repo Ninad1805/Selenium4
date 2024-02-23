@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="1" total="2" passed="1" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2024-02-24T03:07:45 IST" name="Default suite" finished-at="2024-02-24T03:07:54 IST" duration-ms="9633">
+    <groups>
+    </groups>
+    <test started-at="2024-02-24T03:07:45 IST" name="Default test" finished-at="2024-02-24T03:07:54 IST" duration-ms="9633">
+      <class name="Selenium.Selenium.Tables">
+        <test-method is-config="true" signature="startWebDriver()[pri:0, instance:Selenium.Selenium.Tables@52bf72b5]" started-at="2024-02-24T03:07:45 IST" name="startWebDriver" finished-at="2024-02-24T03:07:46 IST" duration-ms="1705" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- startWebDriver -->
+        <test-method signature="printAllLinks()[pri:0, instance:Selenium.Selenium.Tables@52bf72b5]" started-at="2024-02-24T03:07:46 IST" name="printAllLinks" finished-at="2024-02-24T03:07:54 IST" duration-ms="7739" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- printAllLinks -->
+        <test-method is-config="true" signature="closeWebDriver()[pri:0, instance:Selenium.Selenium.Tables@52bf72b5]" started-at="2024-02-24T03:07:54 IST" name="closeWebDriver" finished-at="2024-02-24T03:07:54 IST" duration-ms="135" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- closeWebDriver -->
+      </class> <!-- Selenium.Selenium.Tables -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
