@@ -12,30 +12,33 @@ import java.util.concurrent.TimeUnit;
 
 public class EmailApiTest extends BaseClass {
 
-	emailApi emailapi = new emailApi();
+	EmailApi emailApi = new EmailApi();
+	String attachment = "C:\\\\\\\\Users\\\\\\\\Ninad\\\\\\\\eclipse-workspace\\\\\\\\Selenium\\\\\\\\src\\\\\\\\test\\\\\\\\java\\\\\\\\Resources\\\\\\\\1_spiderverse-iphone-wallpaper-hd (1).jpg";
+	String emailId = "ninadsawantauto@outlook.com";
+	String emailPassword = "Automation@1234";
 
 	@Test
 	public void emailNotification() {
-		String emailSubject = "Manchester United";
-		String[] emailBody = { "unravel.", "Spain", "Erin Collantes, a British teacher in Spain, finds herself caugh",
-				"Erin Collantes, a British teacher in Spain, finds herself caugh" };
-		System.out.println(emailBody);
-		emailapi.fetchEmailNotification(emailSubject, emailBody);
+		String emailSubject = "Thank You from  Live Indian acc";
+		String[] emailBody = { "New mail dialogue description" };
+		emailApi.fetchEmailNotification(emailId, emailPassword, emailSubject, emailBody);
 	}
 
 	@Test
 	public void createMailDialogue() {
-		String emailFrom = "ninad1805@outlook.com";
 		String emailTo = "qatesting.new@k12-lets-talk.com";
-		emailapi.sendEmail(emailFrom, emailTo,
-				"C:\\\\Users\\\\Ninad\\\\eclipse-workspace\\\\Selenium\\\\src\\\\test\\\\java\\\\Resources\\\\1_spiderverse-iphone-wallpaper-hd (1).jpg");
+		String emailSubject = "New mail dialogue subject";
+		String emailBody = "New mail dialogue description";
+		emailApi.sendEmail(emailId, emailPassword, emailTo, attachment, emailSubject, emailBody);
 	}
 
 	@Test
-	public void repltToEmail() {
-		String emailSubject = "Ninad's Email Internal Dialogue";
+	public void replyToEmail() {
+		String receivedEmailSubject = "New mail dialogue subject";
 		String replyTxt = "Reply to customer";
-		emailapi.replyToEmail(emailSubject, replyTxt);
+		String emailSubject = "Reply from customer";
+		String emailBody = "Reply from customer";
+		emailApi.replyToEmail(receivedEmailSubject, replyTxt, emailSubject, emailBody, attachment);
 	}
 
 }
