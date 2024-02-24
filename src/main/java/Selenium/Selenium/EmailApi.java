@@ -26,13 +26,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.testng.Assert;
 
-public class emailApi extends BaseClass {
+public class EmailApi extends BaseClass {
 
-	public void fetchEmailNotification(String EmailSubject, String[] emailBody) {
+	public void fetchEmailNotification(String emailId, String emailPassword, String EmailSubject, String[] emailBody) {
 		// Email configuration details
 		String host = "outlook.office365.com";
-		String username = "ninad1805@outlook.com";
-		String password = "United@1805*";
+		String username = emailId;
+		String password = emailPassword;
 		// Set the properties for the JavaMail session
 		Properties properties = new Properties();
 		properties.put("mail.store.protocol", "imaps");
@@ -56,41 +56,38 @@ public class emailApi extends BaseClass {
 				Folder inbox = store.getFolder("INBOX");
 				inbox.open(Folder.READ_ONLY);
 				int totalMessageCount = inbox.getMessageCount();
-				int startMessageIndex = Math.max(0, totalMessageCount - 5);
+				int startMessageIndex = Math.max(0, totalMessageCount - 10);
 				Message[] messages = inbox.getMessages(startMessageIndex, totalMessageCount);
 				// Check each message for the desired subject and body
 				for (Message message : messages) {
-					if (message.getSubject().contains(EmailSubject)) {
-						// System.out.println(message.getSubject());
-						System.out.println("From: " + InternetAddress.toString(message.getFrom()));
-						System.out.println("Subject: " + message.getSubject());
-						System.out.println("Date: " + message.getSentDate());
-						System.out.println("Content: ");
-						Object content = message.getContent();
-						if (content instanceof String) {
-							// If content is plain text
-							// System.out.println(content);
-						} else if (content instanceof Multipart) {
-							// If content is multipart (e.g., HTML)
-							Multipart multipart = (Multipart) content;
-							for (int i = 0; i < multipart.getCount(); i++) {
-								BodyPart bodyPart = multipart.getBodyPart(i);
-								if (bodyPart.getContentType().contains("text/html")) {
-									String htmlContent = (String) bodyPart.getContent();
-									Document document = Jsoup.parse(htmlContent);
-									String textContent = document.text();
-									for (int j = 0; j < emailBody.length; j++) {
-										if (textContent.contains(emailBody[j])) {
-											Assert.assertTrue(textContent.contains(emailBody[j]));
-											System.out.println("The text " + emailBody[j] + " exists in the mail body");
-										}else {
-											System.out.println("The text "+emailBody[j]+" does not exists in the mail body");
-											Assert.fail();
-										}
+					// if (message.getSubject().contains(EmailSubject))
+					// System.out.println(message.getSubject());
+					// System.out.println("From: " + InternetAddress.toString(message.getFrom()));
+					// System.out.println("Subject: " + message.getSubject());
+					// System.out.println("Date: " + message.getSentDate());
+					// System.out.println("Content: ");
+					Object content = message.getContent();
+					if (content instanceof String) {
+						// If content is plain text
+						// System.out.println(content);
+					} else if (content instanceof Multipart) {
+						// If content is multipart (e.g., HTML)
+						Multipart multipart = (Multipart) content;
+						for (int i = 0; i < multipart.getCount(); i++) {
+							BodyPart bodyPart = multipart.getBodyPart(i);
+							if (bodyPart.getContentType().contains("text/html")) {
+								String htmlContent = (String) bodyPart.getContent();
+								Document document = Jsoup.parse(htmlContent);
+								String textContent = document.text();
+								for (int j = 0; j < emailBody.length; j++) {
+									if (textContent.contains(emailBody[j])
+											&& message.getSubject().contains(EmailSubject)) {
+										Assert.assertTrue(textContent.contains(emailBody[j]));
+										System.out.println("The text \"" + emailBody[j] + "\" exists in the mail body");
+										return;
+									} else {
+										System.out.print("");
 									}
-									System.out.println(textContent);
-									// Exit the loop if the desired email is found
-									return;
 								}
 							}
 						}
@@ -98,27 +95,24 @@ public class emailApi extends BaseClass {
 				}
 				inbox.close(false);
 				store.close();
-
-				// Sleep for a short interval before checking again
 				TimeUnit.SECONDS.sleep(10); // Check every 10 seconds
 			}
-			// If the desired email is not found within the timeout period
-			System.out.println("Desired email not found within the timeout period.");
-			// Close the resources
+			// System.out.println("Desired email not found within the timeout period.");
+			Assert.fail("Desired email not found within the timeout period.");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void sendEmail(String emailFrom, String emailTo, String attachment) {
+	public void sendEmail(String emailId, String emailPassword, String emailTo, String attachment, String emailSubject,
+			String emailBody) {
 
-		final String from = emailFrom;
-		final String password = "United@1805*";
+		final String from = emailId;
+		final String password = emailPassword;
 		String to = emailTo;
-		String subject = "Test Email from Java";
-		String body = "This is a test email sent from Java.";
-		// SMTP server configuration (Gmail SMTP server used in this example)
+		String subject = emailSubject;
+		String body = emailBody;
 		String host = "smtp-mail.outlook.com";
 		int port = 587;
 		// Set additional properties
@@ -160,11 +154,12 @@ public class emailApi extends BaseClass {
 		}
 	}
 
-	public void replyToEmail(String EmailSubject, String repltTxt) {
+	public void replyToEmail(String receivedEmailSubject, String repltTxt, String emailSubject, String emailBody,
+			String attachment) {
 		// Email configuration details
 		String host = "outlook.office365.com";
-		String username = "ninad1805@outlook.com";
-		String password = "United@1805*";
+		String username = "ninadsawantauto@outlook.com";
+		String password = "Automation@1234";
 		// Set the properties for the JavaMail session
 		Properties properties = new Properties();
 		properties.put("mail.store.protocol", "imaps");
@@ -192,16 +187,9 @@ public class emailApi extends BaseClass {
 				Message[] messages = inbox.getMessages(startMessageIndex, totalMessageCount);
 				// Check each message for the desired subject and body
 				for (Message message : messages) {
-					if (message.getSubject().contains(EmailSubject)) {
-						// System.out.println(message.getSubject());
-						System.out.println("From: " + InternetAddress.toString(message.getFrom()));
-						System.out.println("Subject: " + message.getSubject());
-						System.out.println("Date: " + message.getSentDate());
-						System.out.println("Content: ");
+					if (message.getSubject().contains(receivedEmailSubject)) {
 						Object content = message.getContent();
 						if (content instanceof String) {
-							// If content is plain text
-							// System.out.println(message);
 						} else if (content instanceof Multipart) {
 							// If content is multipart (e.g., HTML)
 							Multipart multipart = (Multipart) content;
@@ -211,12 +199,9 @@ public class emailApi extends BaseClass {
 									String htmlContent = (String) bodyPart.getContent();
 									Document document = Jsoup.parse(htmlContent);
 									String textContent = document.text();
-									// System.out.println(Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()));
 									if (textContent.contains(repltTxt)) {
-										System.out.println(textContent);
-										System.out.println(InternetAddress.toString(message.getReplyTo()));
-										sendEmail(username, InternetAddress.toString(message.getReplyTo()),
-												"C:\\\\Users\\\\Ninad\\\\eclipse-workspace\\\\Selenium\\\\src\\\\test\\\\java\\\\Resources\\\\1_spiderverse-iphone-wallpaper-hd (1).jpg");
+										sendEmail(username, password, InternetAddress.toString(message.getReplyTo()),
+												attachment, emailSubject, emailBody);
 										return;
 									}
 								}
@@ -226,12 +211,11 @@ public class emailApi extends BaseClass {
 				}
 				inbox.close(false);
 				store.close();
-
 				// Sleep for a short interval before checking again
 				TimeUnit.SECONDS.sleep(10); // Check every 10 seconds
 			}
 			// If the desired email is not found within the timeout period
-			System.out.println("Desired email not found within the timeout period.");
+			Assert.fail("Desired email not found within the timeout period.");
 			// Close the resources
 
 		} catch (Exception e) {

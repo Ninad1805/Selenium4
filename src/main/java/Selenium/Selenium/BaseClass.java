@@ -9,17 +9,19 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class BaseClass {
 	WebDriver driver;
+	//EmailApi emailApi = new EmailApi();
 
 	@BeforeTest
 	public void startWebDriver() {
-		WebDriverManager.chromedriver().setup();
-		driver = new ChromeDriver();
-		driver.manage().window().maximize();
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+		/*
+		 * WebDriverManager.chromedriver().setup(); driver = new ChromeDriver();
+		 * driver.manage().window().maximize();
+		 * driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+		 */
 	}
 
 	@AfterTest
 	public void closeWebDriver() {
-		driver.quit();
+		//driver.quit();
 	}
 }
