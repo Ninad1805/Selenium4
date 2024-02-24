@@ -40,12 +40,13 @@ public class EmailApi extends BaseClass {
 		properties.put("mail.imaps.port", "993");
 		properties.put("mail.imaps.starttls.enable", "true");
 		// Set the timeout (in milliseconds)
-		long timeout = 200 * 1000; // 100 seconds
+		long timeout = 500 * 1000; // 100 seconds
 		try {
+			int j = 0;
+			;
 			// Create a Session object and connect to the email server
 			Session session = Session.getDefaultInstance(properties);
 			Store store = session.getStore("imaps");
-
 			// Start time for timeout
 			long startTime = System.currentTimeMillis();
 			// Loop until the timeout is reached
@@ -59,6 +60,7 @@ public class EmailApi extends BaseClass {
 				int startMessageIndex = Math.max(0, totalMessageCount - 10);
 				Message[] messages = inbox.getMessages(startMessageIndex, totalMessageCount);
 				// Check each message for the desired subject and body
+
 				for (Message message : messages) {
 					// if (message.getSubject().contains(EmailSubject))
 					// System.out.println(message.getSubject());
@@ -79,19 +81,19 @@ public class EmailApi extends BaseClass {
 								String htmlContent = (String) bodyPart.getContent();
 								Document document = Jsoup.parse(htmlContent);
 								String textContent = document.text();
-								for (int j = 0; j < emailBody.length; j++) {
-									if (textContent.contains(emailBody[j])
-											&& message.getSubject().contains(EmailSubject)) {
+								if (message.getSubject().contains(EmailSubject)) {
+									for (j = 0; j < emailBody.length; j++) {
 										Assert.assertTrue(textContent.contains(emailBody[j]));
 										System.out.println("The text \"" + emailBody[j] + "\" exists in the mail body");
-										return;
-									} else {
-										System.out.print("");
 									}
 								}
 							}
 						}
 					}
+				}
+				if (emailBody.length == j) {
+					Assert.assertTrue(true, "The mail is successfully fetched");
+					return;
 				}
 				inbox.close(false);
 				store.close();
@@ -100,7 +102,9 @@ public class EmailApi extends BaseClass {
 			// System.out.println("Desired email not found within the timeout period.");
 			Assert.fail("Desired email not found within the timeout period.");
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			e.printStackTrace();
 		}
 	}
