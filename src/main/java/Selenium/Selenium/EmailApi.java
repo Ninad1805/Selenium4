@@ -60,15 +60,8 @@ public class EmailApi extends BaseClass {
 				int startMessageIndex = Math.max(0, totalMessageCount - 10);
 				Message[] messages = inbox.getMessages(startMessageIndex, totalMessageCount);
 				// Check each message for the desired subject and body
-
-				for (Message message : messages) {
-					// if (message.getSubject().contains(EmailSubject))
-					// System.out.println(message.getSubject());
-					// System.out.println("From: " + InternetAddress.toString(message.getFrom()));
-					// System.out.println("Subject: " + message.getSubject());
-					// System.out.println("Date: " + message.getSentDate());
-					// System.out.println("Content: ");
-					Object content = message.getContent();
+				for (int k = messages.length - 1; k > 0; k--) {
+					Object content = messages[k].getContent();
 					if (content instanceof String) {
 						// If content is plain text
 						// System.out.println(content);
@@ -81,31 +74,32 @@ public class EmailApi extends BaseClass {
 								String htmlContent = (String) bodyPart.getContent();
 								Document document = Jsoup.parse(htmlContent);
 								String textContent = document.text();
-								if (message.getSubject().contains(EmailSubject)) {
+								if (messages[k].getSubject().contains(EmailSubject)
+										&& textContent.contains(emailBody[0])) {
 									for (j = 0; j < emailBody.length; j++) {
 										Assert.assertTrue(textContent.contains(emailBody[j]));
 										System.out.println("The text \"" + emailBody[j] + "\" exists in the mail body");
+									}
+									if (emailBody.length == j) {
+										Assert.assertTrue(true, "The mail is successfully fetched");
+										return;
 									}
 								}
 							}
 						}
 					}
 				}
-				if (emailBody.length == j) {
-					Assert.assertTrue(true, "The mail is successfully fetched");
-					return;
-				}
 				inbox.close(false);
 				store.close();
 				TimeUnit.SECONDS.sleep(10); // Check every 10 seconds
 			}
-			// System.out.println("Desired email not found within the timeout period.");
 			Assert.fail("Desired email not found within the timeout period.");
 
 		} catch (
 
 		Exception e) {
 			e.printStackTrace();
+			Assert.fail();
 		}
 	}
 
@@ -223,6 +217,84 @@ public class EmailApi extends BaseClass {
 			// Close the resources
 
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void fetchEmailNotificationXpath(String emailId, String emailPassword, String EmailSubject,
+			String[] emailBody) {
+		// Email configuration details
+		String host = "outlook.office365.com";
+		String username = emailId;
+		String password = emailPassword;
+		// Set the properties for the JavaMail session
+		Properties properties = new Properties();
+		properties.put("mail.store.protocol", "imaps");
+		properties.put("mail.imaps.host", host);
+		properties.put("mail.imaps.port", "993");
+		properties.put("mail.imaps.starttls.enable", "true");
+		// Set the timeout (in milliseconds)
+		long timeout = 500 * 1000; // 100 seconds
+		try {
+			int j = 0;
+			;
+			// Create a Session object and connect to the email server
+			Session session = Session.getDefaultInstance(properties);
+			Store store = session.getStore("imaps");
+			// Start time for timeout
+			long startTime = System.currentTimeMillis();
+			// Loop until the timeout is reached
+			while (System.currentTimeMillis() - startTime < timeout) {
+				// Fetch recent messages
+				store.connect(host, username, password);
+				// Open the inbox folder
+				Folder inbox = store.getFolder("INBOX");
+				inbox.open(Folder.READ_ONLY);
+				int totalMessageCount = inbox.getMessageCount();
+				int startMessageIndex = Math.max(0, totalMessageCount - 10);
+				Message[] messages = inbox.getMessages(startMessageIndex, totalMessageCount);
+				// Check each message for the desired subject and body
+				for (int k = messages.length - 1; k > 0; k--) {
+					Object content = messages[k].getContent();
+					if (content instanceof String) {
+						// If content is plain text
+						// System.out.println(content);
+					} else if (content instanceof Multipart) {
+						// If content is multipart (e.g., HTML)
+						Multipart multipart = (Multipart) content;
+						for (int i = 0; i < multipart.getCount(); i++) {
+							BodyPart bodyPart = multipart.getBodyPart(i);
+							if (bodyPart.getContentType().contains("text/html")) {
+								String htmlContent = (String) bodyPart.getContent();
+
+								if (messages[k].getSubject().contains(EmailSubject)) {
+									for (j = 0; j < emailBody.length; j++) {
+										String html = emailBody[j] + "</div>";
+										if (htmlContent.contains(html)) {
+											System.out.println("Email contains " + emailBody[j]);
+										}
+									}
+									if (emailBody.length == j) {
+										Assert.assertTrue(true, "The mail is successfully fetched");
+										return;
+
+									}
+
+								}
+							}
+						}
+					}
+				}
+			}
+			// inbox.close(false);
+			store.close();
+			TimeUnit.SECONDS.sleep(10); // Check every 10 seconds
+			// }
+			Assert.fail("Desired email not found within the timeout period.");
+
+		} catch (
+
+		Exception e) {
 			e.printStackTrace();
 		}
 	}
