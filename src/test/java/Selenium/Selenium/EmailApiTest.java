@@ -19,10 +19,20 @@ public class EmailApiTest extends BaseClass {
 
 	@Test
 	public void emailNotification() {
-		String emailSubject = "New mail dialogue subject Ninad Sawant";
-		String[] emailBody = { "New mail dialogue subject Ninad Sawant", "New mail dialogue description Ninad Sawant",
-				"New Dialogue Received" };
+		String emailSubject = "Automation dialogue subject Non Anonymous - 28-Feb-2024 20:35:43 #15608";
+		String[] emailBody = { "SysAdmin Saurabh submitted new Dialogue via Recorder",
+				"Automation dialogue subject Non Anonymous - 28-Feb-2024 20:35:43",
+				"Automation dialogue description Non Anonymous - 28-Feb-2024 20:35:44", "Sankets Automation IA" };
 		emailApi.fetchEmailNotification(emailId, emailPassword, emailSubject, emailBody);
+	}
+
+	@Test
+	public void emailNotificationXpath() {
+		String emailSubject = "Automation dialogue subject Non Anonymous - 28-Feb-2024 20:35:43 #15608";
+		String[] emailBody = { "SysAdmin Saurabh submitted new Dialogue via Recorder",
+				"Automation dialogue subject Non Anonymous - 28-Feb-2024 20:35:43",
+				"Automation dialogue description Non Anonymous - 28-Feb-2024 20:35:44", "Sankets Automation IA" };
+		emailApi.fetchEmailNotificationXpath(emailId, emailPassword, emailSubject, emailBody);
 	}
 
 	@Test
